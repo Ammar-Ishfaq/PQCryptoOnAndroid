@@ -6,15 +6,15 @@ The PQC algorithm implementations come from the [libOQS](https://github.com/open
 The project illustrates how to deploy PQCrypto test batches on multiple Android cpu architectures and OS versions (APIs).
 
 PQCryptoOnAndroid is a fork of [LibOQSTestApp](https://github.com/Hatzen/LibOQSTestApp) and addresses multiple issues, including:
-* Build libOQS tests on 32-bit armv7 and x86 (in addition to armv8 and x86_64) architectures.
-* Fix a stack overflow issue of Classic McEliece. McEliece needs a 2-4MB stack but the Android JVM (ART) threads are defaulted to 1MB  stacks.
-* Allows to locally run PQCrypto tests on emulator devices for all Android ABIs (armeabi-v7a, arm64-v8a, x86, x86_64) without long booting timings.
+* Build libOQS tests on 32-bit ARMv7 and x86 (in addition to ARMv8 and x86_64) architectures.
+* Fix to a stack overflow issue of Classic McEliece. McEliece needs a 2-4MB stack but the Android JVM (ART) threads are defaulted to 1MB stacks.
+* Allows to locally run PQCrypto tests on emulator devices for all major Android ABIs (armeabi-v7a, arm64-v8a, x86 and x86_64) without long boot timings.
 
 ## Project structure
 
 The project is split into 
   
-1. The module which wraps the JNI Interface to use liboqs on android (liboqs-android folder).
+1. The module which wraps the JNI Interface to use liboqs on android (`liboqs-android` folder).
 
 2. An example app (app folder) showing the usage with a fictional example:
 
@@ -23,7 +23,7 @@ The project is split into
 ## Description of sources and modifications
 
 A Prebuilt version of libOQS (commit [b1d42d6](https://github.com/open-quantum-safe/liboqs/commit/b1d42d61f63aa61ce007ada7939e326e0d6e896c)) is provided for all Android ABIs (see `liboqs-android/jni/jniLibs/*`).
-You can also generate updated prebuilt `lliboqs.so` files for the latest libOQS versions by running the `gen_prebuilt_liboqs.sh` script (require NDK installed). 
+You can also generate updated prebuilt `liboqs.so` files for the latest libOQS versions by running the `gen_prebuilt_liboqs.sh` script (require NDK installed). 
 
 The jni files `app/jni/jni/*` are slightly modified (from the [libOQS java wrapper](https://github.com/open-quantum-safe/liboqs-java)) (package name changes and a minor fix) to compile successfully.  
   
@@ -48,5 +48,5 @@ The instrumented tests should run and the result can be viewed by opening the xm
 
 
 ## TODOs
- - [ ] Add tests for and Android device using a Post-Quantum OpenSSL client to connect to a remote TLS server.
+ - [ ] Add tests for an Android device running a post-quantum OpenSSL client to connect to a remote TLS server.
  - [ ] Provide build and testing instructions for Ubuntu and macOS
