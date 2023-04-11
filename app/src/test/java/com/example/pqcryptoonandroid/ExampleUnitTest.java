@@ -1,4 +1,4 @@
-package com.example.liboqstestapp;
+package com.example.pqcryptoonandroid;
 
 import org.junit.Test;
 

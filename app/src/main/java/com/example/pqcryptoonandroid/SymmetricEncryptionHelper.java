@@ -1,10 +1,6 @@
-package com.example.liboqstestapp;
+package com.example.pqcryptoonandroid;
 
 import android.util.Base64;
-
-import com.example.liboqs.Common;
-
-import java.nio.charset.Charset;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;

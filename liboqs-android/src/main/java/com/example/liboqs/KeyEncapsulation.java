@@ -5,7 +5,13 @@ import java.util.Arrays;
 /**
  * \brief Key Encapsulation Mechanisms
  */
-public class KeyEncapsulation {
+public class KeyEncapsulation implements Runnable {
+
+
+    @Override
+    public void run() {
+        generate_keypair_();
+    }
 
     /**
      * \brief KEM algorithm details
@@ -157,6 +163,11 @@ public class KeyEncapsulation {
         int rv_ = generate_keypair(this.public_key_, this.secret_key_);
         if (rv_ != 0) throw new RuntimeException("Cannot generate keypair");
         return this.public_key_;
+    }
+
+    private void generate_keypair_() throws RuntimeException {
+        int rv_ = generate_keypair(this.public_key_, this.secret_key_);
+        if (rv_ != 0) throw new RuntimeException("Cannot generate keypair");
     }
 
     /**

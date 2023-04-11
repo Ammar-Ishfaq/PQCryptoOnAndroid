@@ -1,4 +1,4 @@
-package com.example.liboqstestapp;
+package com.example.pqcryptoonandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,8 +16,6 @@ import com.example.liboqs.KEMs;
 import com.example.liboqs.KeyEncapsulation;
 import com.example.liboqs.Pair;
 import com.google.android.material.tabs.TabLayout;
-
-import java.io.UnsupportedEncodingException;
 
 public class MainActivity extends AppCompatActivity {
 

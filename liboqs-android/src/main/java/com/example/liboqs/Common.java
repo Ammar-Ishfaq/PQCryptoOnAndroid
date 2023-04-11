@@ -3,10 +3,11 @@ package com.example.liboqs;
 import android.os.Build;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Common {
 
-    private static final String OS = System.getProperty("os.name").toLowerCase();
+    private static final String OS = Objects.requireNonNull(System.getProperty("os.name")).toLowerCase();
 
     public static void wipe(byte[] array) {
         Arrays.fill(array, (byte) 0);
@@ -26,7 +27,7 @@ public class Common {
 
     public static void loadNativeLibrary() {
         System.err.println("---------------------------");
-        System.err.println("Loading liboqs for: " + Build.CPU_ABI);
+        System.err.println("Loading liboqs for: " + Build.SUPPORTED_ABIS);
         System.err.println("---------------------------");
         System.loadLibrary("oqs-jni");
     }
