@@ -1,9 +1,9 @@
 # PQCryptoOnAndroid
   
-PQCryptoOnAndroid provides a sample Android project with a batch of NIST PQC KEM and Signature tests.
+PQCryptoOnAndroid provides a sample Android project with [instrumentation tests](https://developer.android.com/reference/android/app/Instrumentation) for the NIST PQC KEM and Signature algorithms.
 
 The PQC algorithm implementations come from the [libOQS](https://github.com/open-quantum-safe/liboqs) library.
-The project illustrates how to deploy PQCrypto test batches on multiple Android cpu architectures and OS versions (APIs).
+The project illustrates how to deploy PQCrypto instrumented testing on multiple Android cpu architectures and OS versions (APIs).
 
 PQCryptoOnAndroid is a fork of [LibOQSTestApp](https://github.com/Hatzen/LibOQSTestApp) and addresses multiple issues, including:
 * Builds libOQS on 32-bit ARMv7 and x86 (in addition to ARMv8 and x86_64) architectures.
