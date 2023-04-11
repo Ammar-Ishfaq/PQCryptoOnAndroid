@@ -43,6 +43,7 @@ The jni files `app/jni/jni/*` are slightly modified (from the [libOQS java wrapp
 	- Start the emulator: `"play button"`. If booting time is slow check out [hardware accelation for emulators](https://developer.android.com/studio/run/emulator-acceleration#vm-windows).
 	- Open Android studio terminal (`View` -> `Tool Windows` -> `Terminal`).
 	- Type: `./gradlew connectedDebugAndroidTest -i`.
+
 The instrumented tests should run and the result can be viewed by opening the xml report file under `.\liboqs-android\build\outputs\androidTest-results\connected\` .
 See a successful sample [report](https://github.com/geovandro/PQCryptoOnAndroid/tree/master/liboqs-android/sample-test-report/report.xml).
 
