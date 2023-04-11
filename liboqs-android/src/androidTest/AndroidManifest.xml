@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="your.app.package">
+  package="com.example.android">
 
   <application>
       <meta-data android:name="com.example.android.KEMTest" android:value="dummy-KEMTest-id" />
