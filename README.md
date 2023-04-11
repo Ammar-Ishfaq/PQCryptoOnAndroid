@@ -35,9 +35,11 @@ The jni files `app/jni/jni/*` are slightly modified (from the [libOQS java wrapp
 - Create an AVD device (emulator):
 	- `Tools` -> `Device Manager`. `Create Device`.
 		- `Tablet`: `Nexus 10` -> `Next`. Now select an Android image:
-			* For x86 you could pick under `recommended` an image with `api 24 : ABI x86`.
-			* For x86_64 you could pick under `x86 images` an image with `api 24 : ABI x86_64`.
-			* For armeabi-v7a and arm64-v8a you should pick under `x86 images` an image with `api 30 : ABI x86_64`. see [Run ARM binaries on Android emulator](https://android-developers.googleblog.com/2020/03/run-arm-apps-on-android-emulator.html).
+			* For x86 ABI you could pick under `recommended` an image with `API 24 : ABI x86`.
+			* For x86_64 ABI you could pick under `x86 images` an image with `API 24 : ABI x86_64`.
+			* For armeabi-v7a or arm64-v8 ABIs:
+				* On an ARM host: you could pick under `other images` an image with `API 24 : ABI armeabi-v7a or ABI arm64-v8a`.
+				* On a x86_64 host: pick under `x86 images` an image with `API 30 : ABI x86_64`. see [Run ARM binaries on Android emulator](https://android-developers.googleblog.com/2020/03/run-arm-apps-on-android-emulator.html).
 		- `Next` -> `Finish`.
 - Run the instrumented tests on the emulator. 
 	- Start the emulator: `"play button"`. If booting time is slow check out [hardware accelation for emulators](https://developer.android.com/studio/run/emulator-acceleration#vm-windows).
