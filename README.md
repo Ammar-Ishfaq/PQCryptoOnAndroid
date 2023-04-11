@@ -6,8 +6,8 @@ The PQC algorithm implementations come from the [libOQS](https://github.com/open
 The project illustrates how to deploy PQCrypto test batches on multiple Android cpu architectures and OS versions (APIs).
 
 PQCryptoOnAndroid is a fork of [LibOQSTestApp](https://github.com/Hatzen/LibOQSTestApp) and addresses multiple issues, including:
-* Build libOQS tests on 32-bit ARMv7 and x86 (in addition to ARMv8 and x86_64) architectures.
-* Fix to a stack overflow issue of Classic McEliece. McEliece needs a 2-4MB stack but the Android JVM (ART) threads are defaulted to 1MB stacks.
+* Builds libOQS on 32-bit ARMv7 and x86 (in addition to ARMv8 and x86_64) architectures.
+* Fixes a stack overflow issue of Classic McEliece. McEliece needs a 2-4MB stack but the Android JVM (ART) threads are defaulted to 1MB stacks.
 * Allows to locally run PQCrypto tests on emulator devices for all major Android ABIs (armeabi-v7a, arm64-v8a, x86 and x86_64) without long boot timings.
 
 ## Project structure
