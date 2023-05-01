@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+    namespace "com.example.pqcryptoonandroid"
     compileSdkVersion 31
     //ndkVersion '21.2.6472646'
 

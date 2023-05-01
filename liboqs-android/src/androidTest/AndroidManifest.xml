@@ -1,7 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.example.android">
-
-  <application>
-      <meta-data android:name="com.example.android.KEMTest" android:value="dummy-KEMTest-id" />
-  </application>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <meta-data android:name="com.example.android" android:value="dummy-Test-id" />
+    </application>
+<!--    <instrumentation android:name="androidx.test.runner.AndroidJUnitRunner"-->
+<!--        android:label="Instrumented Tests via shell" />-->
 </manifest>

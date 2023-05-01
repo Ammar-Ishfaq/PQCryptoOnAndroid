@@ -232,6 +232,10 @@ public class Signature {
         System.out.println("Signature: " + alg_details_.method_name);
     }
 
+    public String get_signature_name() {
+        return alg_details_.method_name;
+    }
+
     /**
      * \brief print signature algorithm details. If a SignatureDetails object is
      * not initialized, initialize it and fill it using native C code.

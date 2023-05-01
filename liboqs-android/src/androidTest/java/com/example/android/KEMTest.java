@@ -1,5 +1,7 @@
 package com.example.android;
 
+import android.app.Instrumentation;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.example.liboqs.KEMs;
@@ -18,13 +20,24 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-@RunWith(Parameterized.class)
+import androidx.test.platform.app.InstrumentationRegistry;
+
+@RunWith(Parallelized.class)
 public class KEMTest {
 
     @Parameterized.Parameter(value = 0)
     public String kem_name;
 
     static ArrayList<String> ignoredKems = new ArrayList<>();
+
+    /**
+     *  Print test result when run via "am instrument"
+     */
+    private void out(String str) {
+        Bundle b = new Bundle();
+        b.putString(Instrumentation.REPORT_KEY_STREAMRESULT, "\n" + str);
+        InstrumentationRegistry.getInstrumentation().sendStatus(0, b);
+    }
 
     /**
      * Method to convert the list of KEMs to a stream for input to testAllKEMs
@@ -56,6 +69,10 @@ public class KEMTest {
         try {
             byte[] client_public_key;
 
+            StringBuilder sb = new StringBuilder();
+            sb.append(kem_name);
+            sb.append(String.format("%1$" + (40 - kem_name.length()) + "s", ""));
+
             // Create client and server
             KeyEncapsulation client = new KeyEncapsulation(kem_name);
             KeyEncapsulation server = new KeyEncapsulation(kem_name);
@@ -70,7 +87,6 @@ public class KEMTest {
             } else {
                 client_public_key = client.generate_keypair();
             }
-            //Log.d(getClass().getSimpleName(), "keypair done");
 
             // Server: encapsulate secret with client's public key
             Pair<byte[], byte[]> server_pair = server.encap_secret(client_public_key);
@@ -82,6 +98,10 @@ public class KEMTest {
 
             // Check if equal
             assertArrayEquals(shared_secret_client, shared_secret_server, kem_name);
+
+            // If successful print KEM name, otherwise an exception will be thrown
+            sb.append("[").append("PASSED").append("]");
+            out(sb.toString());
 
             client.dispose_KEM();
         } catch (Exception e) {

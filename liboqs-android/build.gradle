@@ -3,7 +3,10 @@ plugins {
 }
 
 android {
+    namespace "com.example.android"
     compileSdkVersion 31
+    buildToolsVersion "33.0.2"
+    ndkVersion "25.2.9519653"
 
     //TODO: parameterize versions using definitions in the root project's gradle file and inherit here
     // See: https://github.com/android/testing-samples/blob/main/runner/AndroidJunitRunnerSample/app/build.gradle#L47
@@ -31,9 +34,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lint {
+        ignoreWarnings false
     }
 
     externalNativeBuild {
@@ -51,6 +59,39 @@ android {
         exclude 'META-INF/LICENSE.md'
         exclude 'META-INF/LICENSE-notice.md'
     }
+
+
+    splits {
+        abi {
+            // Enables building multiple APKs per ABI using: ./gradlew assembleRelease -Pabi-splits
+            enable project.hasProperty('abi-splits')
+
+            // By default all ABIs are included, so use reset() and specify a chosen list.
+            // Resets the list of ABIs that Gradle should create APKs for to none.
+            reset()
+
+            // Specifies a list of ABIs that Gradle should create APKs for.
+            if (project.hasProperty('abi-splits')) {
+                def abiSplits = project.getProperty('abi-splits')
+                println("project.getProperty('abi-splits') -> " + project.getProperty('abi-splits'))
+                if (abiSplits instanceof Boolean || abiSplits == 'true' || abiSplits == '') {
+                    universalApk true
+                    abiSplits = "armeabi-v7a,arm64-v8a,x86,x86_64"
+                    println "Building universal APK"
+                } else {
+                    universalApk false
+                    abiSplits = project.getProperty('abi-splits')
+                }
+                println "Building ABI splits for: " + abiSplits
+                include abiSplits.split(',')
+            }
+        }
+    }
+
+}
+
+tasks.withType(JavaCompile) {
+    options.deprecation = true
 }
 
 dependencies {
