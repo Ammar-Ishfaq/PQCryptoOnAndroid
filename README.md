@@ -51,8 +51,8 @@ The jni files `app/jni/jni/*` are slightly modified (from the [libOQS java wrapp
     - Start the emulator: `"play button"`. If booting time is slow check out [hardware accelation for emulators](https://developer.android.com/studio/run/emulator-acceleration#vm-windows). 
     - Open Android studio terminal (`View` -> `Tool Windows` -> `Terminal`).
     - Run: `.\gradle :liboqs-android:connectedDebugAndroidTest -i [-Pabi-splits=<ABI>]`.  
-&emsp;&ensp;The optional parameter `-Pabi-splits=<ABI>` allows you to install a specific ABI into the APK. This is needed for testing ARM ABIs on x86_64 emulators. If a specific ABI is not set, multiple versions are shipped and the emulator will pick an x86-based one as its primary ABI. See [Android platform ABI support](https://developer.android.com/ndk/guides/abis#android-platform-abi-support).  
-&emsp;&ensp;The local instrumented tests should generate a testing report that can be viewed by opening the xml file under `.\liboqs-android\build\outputs\androidTest-results\connected\`.  
+&emsp;The optional parameter `-Pabi-splits=<ABI>` allows you to install a specific ABI into the APK. This is needed for testing ARM ABIs on x86_64 emulators. If a specific ABI is not set, multiple versions are shipped and the emulator will pick an x86-based one as its primary ABI. See [Android platform ABI support](https://developer.android.com/ndk/guides/abis#android-platform-abi-support).  
+&emsp;The local instrumented tests should generate a testing report that can be viewed by opening the xml file under `.\liboqs-android\build\outputs\androidTest-results\connected\`.  
 
 ## TODOs
  - [ ] Add tests for an Android device running a post-quantum OpenSSL client to connect to a remote TLS server.
