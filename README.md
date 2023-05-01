@@ -56,3 +56,6 @@ The jni files `app/jni/jni/*` are slightly modified (from the [libOQS java wrapp
 ## TODOs
  - [ ] Add tests for an Android device running a post-quantum OpenSSL client to connect to a remote TLS server.
  - [ ] Provide build and testing instructions for Ubuntu and macOS
+
+## Remark on Sphincs+
+Although Sphincs+ tests pass and run fast with x86-based ABIs on emulators, they get very slow on ARM-based ABI emulation, especially the "s-robust" variants. For example, if the "s-robust" variants are included it can double the workflow time for the arm64-v8a ABI (from 25+ minutes to 45+ minutes). Therefore we omit the "s-robust" tests on the CI workflow.  
