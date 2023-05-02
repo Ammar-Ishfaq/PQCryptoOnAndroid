@@ -11,7 +11,7 @@ PQCryptoOnAndroid is a fork of [LibOQSTestApp](https://github.com/Hatzen/LibOQST
 * Building and testing (via Github CI on remote emulators) libOQS on 32-bit ARMv7 and x86 (in addition to ARMv8 and x86_64) architectures.
 * Stack overflow from Classic McEliece. McEliece requires 2-4MB stack space while the Android JVM (ART) thread stack size is 1MB by default. PQCryptoOnAndroid increases the thread stack size in those cases to allow Classic McEliece tests to run. 
 * Slow testing on emulators. Allows to locally run PQC tests on emulator devices for major Android ABIs (armeabi-v7a, arm64-v8a, x86 and x86_64) without long boot timings (in certain [hardware](https://developer.android.com/studio/run/emulator-acceleration#vm-windows)).   
-&ensp;This project gives tailored emulator configurations for faster local tests.
+This project gives tailored emulator configurations for faster local tests.
 
 ## Project structure
 
@@ -52,8 +52,7 @@ The jni files `app/jni/jni/*` are slightly modified (from the [libOQS java wrapp
     - Open Android studio terminal (`View` -> `Tool Windows` -> `Terminal`).
     - Run: `:liboqs-android:installDebugAndroidTest [-Pabi-splits=<ABI>]` to install the APK into the emulator.
     - Run: `adb shell am instrument -w --abi <ABI> -e package com.example.android com.example.android.test/androidx.test.runner.AndroidJUnitRunner`.  
-&emsp;The optional parameter `-Pabi-splits=<ABI>` allows you to install a specific ABI into the APK. This is needed for testing ARM ABIs on x86_64 emulators. If a specific ABI is not set, multiple versions are shipped and the emulator will pick an x86-based one as its primary ABI. See [Android platform ABI support](https://developer.android.com/ndk/guides/abis#android-platform-abi-support).  
-&ensp;The local instrumented tests should generate a testing report that can be viewed by opening the xml file under `.\liboqs-android\build\outputs\androidTest-results\connected\`.  
+&ensp;The optional parameter `-Pabi-splits=<ABI>` allows you to install a specific ABI into the APK. This is needed for testing ARM ABIs on x86_64 emulators. If a specific ABI is not set, multiple versions are shipped and the emulator will pick an x86-based one as its primary ABI. See [Android platform ABI support](https://developer.android.com/ndk/guides/abis#android-platform-abi-support).  
 
 ## TODOs
  - [ ] Add tests for an Android device running a post-quantum OpenSSL client to connect to a remote TLS server.
