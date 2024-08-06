@@ -47,8 +47,9 @@ public class MainActivity extends AppCompatActivity {
     EditText decryptedTextField;
     TextView selectedFolderPath;
     Button selectFolderButton;
+    Button decryptFilesButton;
     TabLayout tabLayout;
-
+    private Boolean isEncrypt = true;
     private Uri selectedFolderUri;
 
     @Override
@@ -167,7 +168,18 @@ public class MainActivity extends AppCompatActivity {
         selectFolderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isEncrypt = true;
                 openFolderPicker();
+            }
+        });
+
+        decryptFilesButton = findViewById(R.id.decryptFilesButton);
+        decryptFilesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isEncrypt = false;
+                openFolderPicker();
+
             }
         });
     }
@@ -183,7 +195,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
             selectedFolderUri = data.getData();
             selectedFolderPath.setText("Selected Folder Path: " + selectedFolderUri.toString());
-            encryptFilesInFolder();
+            if (isEncrypt) encryptFilesInFolder();
+            else decryptFilesInFolder();
+
         }
     }
 
@@ -224,12 +238,58 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private Uri createEncryptedFileUri(DocumentFile file) {
-        String encryptedFileName = file.getName() + ".enc";
-        DocumentFile parentDir = file.getParentFile();
-        if (parentDir != null) {
-            DocumentFile encryptedFile = parentDir.createFile("application/octet-stream", encryptedFileName);
-            return encryptedFile != null ? encryptedFile.getUri() : null;
+    private void decryptFilesInFolder() {
+        if (selectedFolderUri == null) return;
+
+        DocumentFile folder = DocumentFile.fromTreeUri(this, selectedFolderUri);
+        if (folder != null && folder.isDirectory()) {
+            for (DocumentFile file : folder.listFiles()) {
+                if (file.isFile() && file.getName().endsWith(".enc")) {
+                    decryptFile(file);
+                }
+            }
+        }
+    }
+
+    private void decryptFile(DocumentFile file) {
+        try (InputStream is = getContentResolver().openInputStream(file.getUri())) {
+            if (is == null) {
+                throw new IOException("Failed to open input stream for file: " + file.getUri());
+            }
+
+            Uri decryptedFileUri = createDecryptedFileUri(file);
+            if (decryptedFileUri == null) {
+                throw new IOException("Failed to create URI for decrypted file");
+            }
+
+            try (OutputStream os = getContentResolver().openOutputStream(decryptedFileUri)) {
+                if (os == null) {
+                    throw new IOException("Failed to open output stream for file: " + decryptedFileUri);
+                }
+
+                SymmetricEncryptionHelper encryptionHelper = SymmetricEncryptionHelper.useDefaultIv(currentClient.sharedSecret);
+                encryptionHelper.decryptStream(is, os);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Uri createEncryptedFileUri(DocumentFile originalFile) {
+        DocumentFile folder = DocumentFile.fromTreeUri(this, selectedFolderUri);
+        if (folder != null && folder.isDirectory()) {
+            return folder.createFile("application/octet-stream", originalFile.getName() + ".enc").getUri();
+        }
+        return null;
+    }
+
+    private Uri createDecryptedFileUri(DocumentFile originalFile) {
+        DocumentFile folder = DocumentFile.fromTreeUri(this, selectedFolderUri);
+        if (folder != null && folder.isDirectory()) {
+            String originalFileName = originalFile.getName();
+            if (originalFileName != null && originalFileName.endsWith(".enc")) {
+                return folder.createFile("application/octet-stream", originalFileName.substring(0, originalFileName.length() - 4)).getUri();
+            }
         }
         return null;
     }
