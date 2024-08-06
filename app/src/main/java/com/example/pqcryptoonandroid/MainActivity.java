@@ -1,21 +1,30 @@
 package com.example.pqcryptoonandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.documentfile.provider.DocumentFile;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.liboqs.Common;
 import com.example.liboqs.KEMs;
 import com.example.liboqs.KeyEncapsulation;
 import com.example.liboqs.Pair;
 import com.google.android.material.tabs.TabLayout;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,7 +45,11 @@ public class MainActivity extends AppCompatActivity {
     EditText plainTextField;
     EditText encryptedTextField;
     EditText decryptedTextField;
+    TextView selectedFolderPath;
+    Button selectFolderButton;
     TabLayout tabLayout;
+
+    private Uri selectedFolderUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle("Serverless Example");
 
-        algorithmNames= KEMs.get_enabled_KEMs().toArray(new String[0]);
+        algorithmNames = KEMs.get_enabled_KEMs().toArray(new String[0]);
 
         client1 = new Client();
         client2 = new Client();
@@ -56,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         updateScreen(getOtherClient());
     }
 
-    private void initCipher (int position) {
+    private void initCipher(int position) {
         String cipher = algorithmNames[position];
         client1.kem = new KeyEncapsulation(cipher);
         client2.kem = new KeyEncapsulation(cipher);
@@ -64,15 +77,13 @@ public class MainActivity extends AppCompatActivity {
         byte[] publicKeyClient1 = client1.kem.generate_keypair();
 
         Pair<byte[], byte[]> sharedSecretEncryptedAndPlainText = client2.kem.encap_secret(publicKeyClient1);
-        client2.sharedSecret = Common.to_hex(sharedSecretEncryptedAndPlainText.getRight())
-                .substring(0, 16);
+        client2.sharedSecret = Common.to_hex(sharedSecretEncryptedAndPlainText.getRight()).substring(0, 16);
 
         byte[] sharedSecretPlain = client1.kem.decap_secret(sharedSecretEncryptedAndPlainText.getLeft());
-        client1.sharedSecret = Common.to_hex(sharedSecretPlain)
-            .substring(0, 16);
+        client1.sharedSecret = Common.to_hex(sharedSecretPlain).substring(0, 16);
     }
 
-    private void updateScreen (Client otherClient) {
+    private void updateScreen(Client otherClient) {
         keyTextField.setText(currentClient.sharedSecret);
 
         String plainText = plainTextField.getText().toString();
@@ -97,7 +108,10 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 initCipher(i);
             }
-            @Override public void onNothingSelected(AdapterView<?> adapterView) {}
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
         });
 
         keyTextField = findViewById(R.id.keyText);
@@ -105,10 +119,12 @@ public class MainActivity extends AppCompatActivity {
         plainTextField = findViewById(R.id.inputText);
         plainTextField.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -116,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 updateScreen(otherClient);
             }
         });
+
         encryptedTextField = findViewById(R.id.outputText);
         decryptedTextField = findViewById(R.id.outputText2);
 
@@ -124,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 currentClient.encryptedText = encryptedTextField.getText().toString();
-                
+
                 keyTextField.setText("");
                 plainTextField.setText("");
                 encryptedTextField.setText("");
@@ -137,19 +154,87 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
+        selectFolderButton = findViewById(R.id.selectFolderButton);
+        selectedFolderPath = findViewById(R.id.selectedFolderPath);
+
+        selectFolderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFolderPicker();
+            }
         });
     }
 
-    private Client getOtherClient() {
-        if (currentClient == client1) {
-            return client2;
-        }
-        return client1;
+    private void openFolderPicker() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        startActivityForResult(intent, 1);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            selectedFolderUri = data.getData();
+            selectedFolderPath.setText("Selected Folder Path: " + selectedFolderUri.toString());
+            encryptFilesInFolder();
+        }
+    }
+
+    private void encryptFilesInFolder() {
+        if (selectedFolderUri == null) return;
+
+        DocumentFile folder = DocumentFile.fromTreeUri(this, selectedFolderUri);
+        if (folder != null && folder.isDirectory()) {
+            for (DocumentFile file : folder.listFiles()) {
+                if (file.isFile()) {
+                    encryptFile(file);
+                }
+            }
+        }
+    }
+
+    private void encryptFile(DocumentFile file) {
+        try (InputStream is = getContentResolver().openInputStream(file.getUri())) {
+            if (is == null) {
+                throw new IOException("Failed to open input stream for file: " + file.getUri());
+            }
+
+            Uri encryptedFileUri = createEncryptedFileUri(file);
+            if (encryptedFileUri == null) {
+                throw new IOException("Failed to create URI for encrypted file");
+            }
+
+            try (OutputStream os = getContentResolver().openOutputStream(encryptedFileUri)) {
+                if (os == null) {
+                    throw new IOException("Failed to open output stream for file: " + encryptedFileUri);
+                }
+
+                SymmetricEncryptionHelper encryptionHelper = SymmetricEncryptionHelper.useDefaultIv(currentClient.sharedSecret);
+                encryptionHelper.encryptStream(is, os);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Uri createEncryptedFileUri(DocumentFile file) {
+        String encryptedFileName = file.getName() + ".enc";
+        DocumentFile parentDir = file.getParentFile();
+        if (parentDir != null) {
+            DocumentFile encryptedFile = parentDir.createFile("application/octet-stream", encryptedFileName);
+            return encryptedFile != null ? encryptedFile.getUri() : null;
+        }
+        return null;
+    }
+
+    private Client getOtherClient() {
+        return currentClient == client1 ? client2 : client1;
+    }
 }
