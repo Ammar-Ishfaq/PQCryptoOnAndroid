@@ -13,8 +13,6 @@ android {
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 31
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -26,7 +24,6 @@ android {
 
     buildTypes {
         release {
-            debuggable true
             jniDebuggable true
             zipAlignEnabled true
             minifyEnabled false
