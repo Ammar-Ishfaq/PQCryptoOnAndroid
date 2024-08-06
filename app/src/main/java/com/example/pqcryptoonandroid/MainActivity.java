@@ -233,6 +233,8 @@ public class MainActivity extends AppCompatActivity {
                 SymmetricEncryptionHelper encryptionHelper = SymmetricEncryptionHelper.useDefaultIv(currentClient.sharedSecret);
                 encryptionHelper.encryptStream(is, os);
             }
+            // Delete the .enc file after decryption
+            file.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -270,6 +272,8 @@ public class MainActivity extends AppCompatActivity {
                 SymmetricEncryptionHelper encryptionHelper = SymmetricEncryptionHelper.useDefaultIv(currentClient.sharedSecret);
                 encryptionHelper.decryptStream(is, os);
             }
+            // Delete the .enc file after decryption
+            file.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
