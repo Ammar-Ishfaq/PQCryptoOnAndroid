@@ -104,7 +104,7 @@
                 android:id="@+id/selectFolderButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Folder"
+                android:text="Select Folder To Encrypt"
                 android:layout_marginTop="20dp"/>
 
             <TextView
@@ -118,7 +118,7 @@
                 android:id="@+id/decryptFilesButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Decrypt Files"
+                android:text="Select Folder To Decrypt"
                 android:layout_marginTop="20dp"/>
 
         </LinearLayout>
