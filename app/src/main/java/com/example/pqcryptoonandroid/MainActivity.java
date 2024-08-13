@@ -88,14 +88,6 @@ public class MainActivity extends AppCompatActivity {
         keyTextField.setText(currentClient.sharedSecret);
 
         String plainText = plainTextField.getText().toString();
-        String encrypted = SymmetricEncryptionHelper.useDefaultIv(currentClient.sharedSecret).encrypt(plainText);
-        encryptedTextField.setText(encrypted);
-
-        encrypted = otherClient.encryptedText;
-        if (encrypted == null || "".equals(encrypted)) {
-            return;
-        }
-        plainText = SymmetricEncryptionHelper.useDefaultIv(currentClient.sharedSecret).decrypt(encrypted);
         decryptedTextField.setText(plainText);
     }
 
@@ -234,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 encryptionHelper.encryptStream(is, os);
             }
             // Delete the .enc file after decryption
-//            file.delete();
+            file.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -273,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
                 encryptionHelper.decryptStream(is, os);
             }
             // Delete the .enc file after decryption
-//            file.delete();
+            file.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }

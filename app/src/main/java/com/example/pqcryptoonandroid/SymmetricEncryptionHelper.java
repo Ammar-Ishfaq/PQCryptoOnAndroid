@@ -1,81 +1,47 @@
 package com.example.pqcryptoonandroid;
 
-import android.util.Base64;
-
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 
 public class SymmetricEncryptionHelper {
+    private final byte[] key;
 
     public static SymmetricEncryptionHelper useDefaultIv(String key) {
-        // TODO: Dont use static IV better transmit the IV in plaintext within the message.
-        byte[] iv = new byte[]{'#', '0', 'a', '0', 'N', '0', '0', 'z', '1', '1', '_', '0', '0', 'x', 'U', '0'};
-        return new SymmetricEncryptionHelper(key.getBytes(), iv);
+        return new SymmetricEncryptionHelper(key.getBytes());
     }
 
-    private static final String AES_ALGORITHM = "AES/CBC/PKCS5Padding";
-
-    private final SecretKeySpec secretKeySpec;
-    private final IvParameterSpec ivSpec;
-
-    public SymmetricEncryptionHelper(byte[] aesKey, byte[] iv) {
-        this.secretKeySpec = new SecretKeySpec(aesKey, "AES");
-        this.ivSpec = new IvParameterSpec(iv);
+    public SymmetricEncryptionHelper(byte[] aesKey) {
+        this.key = aesKey;
     }
-
-    public String decrypt(String text) {
-        try {
-            Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec);
-            byte[] decryptedBytes = cipher.doFinal(Base64.decode(text, Base64.DEFAULT));
-            return new String(decryptedBytes, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            throw new RuntimeException("Something went wrong.", e);
-        }
-    }
-
-    public String encrypt(String text) {
-        try {
-            Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
-            byte[] encrypted = cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
-            return new String(Base64.encode(encrypted, Base64.DEFAULT), StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            throw new RuntimeException("Something went wrong.", e);
-        }
-    }
-
 
     public void encryptStream(InputStream in, OutputStream out) throws Exception {
-        Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        int keyLength = key.length;
+        int keyIndex = 0;
 
-        try (CipherOutputStream cos = new CipherOutputStream(out, cipher)) {
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = in.read(buffer)) != -1) {
-                cos.write(buffer, 0, bytesRead);
+        while ((bytesRead = in.read(buffer)) != -1) {
+            for (int i = 0; i < bytesRead; i++) {
+                buffer[i] ^= key[keyIndex];  // XOR operation
+                keyIndex = (keyIndex + 1) % keyLength;  // Move to the next key byte
             }
+            out.write(buffer, 0, bytesRead);
         }
     }
 
+    // Decrypt the stream using XOR
     public void decryptStream(InputStream in, OutputStream out) throws Exception {
-        Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec);
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        int keyLength = key.length;
+        int keyIndex = 0;
 
-        try (CipherInputStream cis = new CipherInputStream(in, cipher)) {
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = cis.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
+        while ((bytesRead = in.read(buffer)) != -1) {
+            for (int i = 0; i < bytesRead; i++) {
+                buffer[i] ^= key[keyIndex];  // XOR operation for decryption
+                keyIndex = (keyIndex + 1) % keyLength;  // Move to the next key byte
             }
+            out.write(buffer, 0, bytesRead);
         }
     }
 }
