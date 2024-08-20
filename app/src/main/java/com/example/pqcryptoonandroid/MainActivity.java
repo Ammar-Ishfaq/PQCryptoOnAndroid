@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 encryptionHelper.encryptStream(is, os);
             }
             // Delete the .enc file after decryption
-            file.delete();
+//            file.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
                 encryptionHelper.decryptStream(is, os);
             }
             // Delete the .enc file after decryption
-            file.delete();
+//            file.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
